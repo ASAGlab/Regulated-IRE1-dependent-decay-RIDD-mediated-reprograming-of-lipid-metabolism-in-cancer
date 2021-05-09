@@ -28,11 +28,11 @@ The following datasets are included in the repository:
 
 * Metasyx_Sample_Info.txt contains information about group structure and measurement order.
 
-*
+* raw_counts.txt Raw RNAseq counts from featureCounts. 12 samples that were exposed to the IRE1α inhibitor or DMSO. Samples were collected at 8 and 24h after the treatment. Three replicates measured per each condition.
 
-_For more examples, please refer to the [Documentation](https://example.com)_
+* sample_info.txt contains sample information for the RNAseq experiment.
 
-
+* 
 
 <!-- SCRIPTS -->
 ## Scripts
