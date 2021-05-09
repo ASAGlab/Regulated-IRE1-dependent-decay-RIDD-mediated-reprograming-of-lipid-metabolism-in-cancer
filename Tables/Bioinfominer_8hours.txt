@@ -1,0 +1,94 @@
+Term id	Term Definition	Enrichment	Corrected pvalue
+GO:0003241	growth involved in heart morphogenesis	3/5	0.0004
+GO:0045824	negative regulation of innate immune response	8/57	0.0016
+GO:0070245	positive regulation of thymocyte apoptotic process	3/6	0.0017
+GO:0010867	positive regulation of triglyceride biosynthetic process	4/14	0.0017
+GO:0010875	positive regulation of cholesterol efflux	4/16	0.0017
+GO:0010874	regulation of cholesterol efflux	6/39	0.003
+GO:0000122	negative regulation of transcription by RNA polymerase II	47/831	0.0031
+GO:0045995	regulation of embryonic development	12/132	0.0032
+GO:0051491	positive regulation of filopodium assembly	5/30	0.005
+GO:0008593	regulation of Notch signaling pathway	10/101	0.0053
+GO:0003211	cardiac ventricle formation	3/10	0.0057
+GO:0045892	"negative regulation of transcription, DNA-templated"	62/1188	0.007
+GO:0051128	regulation of cellular component organization	116/2465	0.0071
+GO:1902679	negative regulation of RNA biosynthetic process	64/1243	0.0072
+GO:1903507	negative regulation of nucleic acid-templated transcription	64/1241	0.0073
+GO:0032368	regulation of lipid transport	11/127	0.0081
+GO:0090208	positive regulation of triglyceride metabolic process	4/21	0.0099
+GO:0030010	establishment of cell polarity	10/111	0.01
+GO:0051253	negative regulation of RNA metabolic process	67/1329	0.0102
+GO:0070830	bicellular tight junction assembly	5/34	0.0106
+GO:0042059	negative regulation of epidermal growth factor receptor signaling pathway	6/48	0.0116
+GO:0060174	limb bud formation	3/12	0.0118
+GO:0060547	negative regulation of necrotic cell death	4/24	0.0118
+GO:0051004	regulation of lipoprotein lipase activity	4/23	0.0126
+GO:0006801	superoxide metabolic process	5/37	0.0138
+GO:0001568	blood vessel development	29/496	0.0138
+GO:0050777	negative regulation of immune response	12/150	0.0139
+GO:0120034	positive regulation of plasma membrane bounded cell projection assembly	9/99	0.0143
+GO:1901879	regulation of protein depolymerization	8/83	0.0148
+GO:0045747	positive regulation of Notch signaling pathway	6/52	0.0155
+GO:0010817	regulation of hormone levels	30/528	0.0159
+GO:0042147	"retrograde transport, endosome to Golgi"	8/84	0.0164
+GO:0001960	negative regulation of cytokine-mediated signaling pathway	7/67	0.0168
+GO:1901185	negative regulation of ERBB signaling pathway	6/53	0.0173
+GO:0007005	mitochondrion organization	26/442	0.0178
+GO:0016197	endosomal transport	15/216	0.0191
+GO:0072655	establishment of protein localization to mitochondrion	7/72	0.0198
+GO:0048145	regulation of fibroblast proliferation	8/88	0.0199
+GO:0060761	negative regulation of response to cytokine stimulus	7/71	0.0202
+GO:0045746	negative regulation of Notch signaling pathway	5/40	0.0218
+GO:1905952	regulation of lipid localization	12/158	0.0221
+GO:0045934	negative regulation of nucleobase-containing compound metabolic process	69/1427	0.0221
+GO:0001944	vasculature development	29/517	0.0229
+GO:0050796	regulation of insulin secretion	13/181	0.0234
+GO:0044058	regulation of digestive system process	5/42	0.0241
+GO:0007219	Notch signaling pathway	10/128	0.0244
+GO:0001649	osteoblast differentiation	10/126	0.0245
+GO:0001959	regulation of cytokine-mediated signaling pathway	12/167	0.0254
+GO:0051235	maintenance of location	12/163	0.0256
+GO:0090181	regulation of cholesterol metabolic process	6/59	0.0267
+GO:0034330	cell junction organization	14/208	0.0272
+GO:0050654	chondroitin sulfate proteoglycan metabolic process	5/44	0.0285
+GO:0072358	cardiovascular system development	29/527	0.0294
+GO:0006915	apoptotic process	46/920	0.0297
+GO:0051489	regulation of filopodium assembly	5/45	0.03
+GO:0042269	regulation of natural killer cell mediated cytotoxicity	5/46	0.0301
+GO:0043433	negative regulation of DNA-binding transcription factor activity	12/171	0.0304
+GO:0007163	establishment or maintenance of cell polarity	13/189	0.0308
+GO:0042632	cholesterol homeostasis	8/96	0.0308
+GO:0002716	negative regulation of natural killer cell mediated immunity	3/17	0.0312
+GO:0033043	regulation of organelle organization	61/1275	0.0327
+GO:1904035	regulation of epithelial cell apoptotic process	8/95	0.033
+GO:0045446	endothelial cell differentiation	7/80	0.0339
+GO:0045216	cell-cell junction organization	10/133	0.0345
+GO:1901880	negative regulation of protein depolymerization	6/62	0.0358
+GO:0006505	GPI anchor metabolic process	4/32	0.0359
+GO:0120032	regulation of plasma membrane bounded cell projection assembly	12/177	0.0359
+GO:0031343	positive regulation of cell killing	6/65	0.036
+GO:0090276	regulation of peptide hormone secretion	14/214	0.0362
+GO:0006638	neutral lipid metabolic process	8/98	0.0364
+GO:0043542	endothelial cell migration	6/64	0.0365
+GO:0060560	developmental growth involved in morphogenesis	9/118	0.038
+GO:0002715	regulation of natural killer cell mediated immunity	5/48	0.0395
+GO:0009612	response to mechanical stimulus	14/218	0.0401
+GO:0060491	regulation of cell projection assembly	12/179	0.0405
+GO:0031334	positive regulation of protein complex assembly	15/241	0.0405
+GO:0060759	regulation of response to cytokine stimulus	12/178	0.0407
+GO:0019218	regulation of steroid metabolic process	9/121	0.0413
+GO:0035265	organ growth	8/103	0.042
+GO:0045582	positive regulation of T cell differentiation	7/83	0.0421
+GO:0046503	glycerolipid catabolic process	5/51	0.0423
+GO:0051493	regulation of cytoskeleton organization	28/535	0.0433
+GO:0001667	ameboidal-type cell migration	11/167	0.0452
+GO:0090100	positive regulation of transmembrane receptor protein serine/threonine kinase signaling pathway	8/104	0.0458
+GO:0015914	phospholipid transport	7/87	0.0463
+GO:0070125	mitochondrial translational elongation	7/88	0.0464
+GO:0043062	extracellular structure organization	21/380	0.0476
+GO:0009749	response to glucose	10/146	0.0479
+GO:0009967	positive regulation of signal transduction	76/1678	0.048
+GO:0043242	negative regulation of protein complex disassembly	6/69	0.0481
+GO:0034329	cell junction assembly	11/163	0.0486
+GO:0031146	SCF-dependent proteasomal ubiquitin-dependent protein catabolic process	7/90	0.0494
+GO:1903509	liposaccharide metabolic process	8/108	0.0496
