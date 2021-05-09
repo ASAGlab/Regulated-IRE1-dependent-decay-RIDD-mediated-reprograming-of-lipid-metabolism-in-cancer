@@ -12,11 +12,10 @@ In this study, we employed unbiased lipidomic and transcriptomic approaches to i
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#Data">Data</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
-    <li><a href="#contributing">Contributing</a></li>
-    <li><a href="#license">License</a></li>
+    <li><a href="#Scripts">Scripts</a></li>
+    <li><a href="#Figures">Figures</a></li>
+    <li><a href="#Tables">Tables</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#acknowledgements">Acknowledgements</a></li>
   </ol>
 </details>
 
