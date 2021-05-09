@@ -1,18 +1,11 @@
-# Regulated IRE1-dependent decay (RIDD) mediated reprograming of lipid metabolism in cancer
+# Regulated IRE1α-dependent decay (RIDD) mediated reprograming of lipid metabolism in cancer
 
 This repository contains materials and methods for the paper "Regulated IRE1α-dependent decay (RIDD)-mediated reprograming of lipid metabolism in cancer" by Almanza*, Mnich* et al, (2021)
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
-
-There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need -- I think this is it.
-
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
+In this study, we employed unbiased lipidomic and transcriptomic approaches to investigate the contribution of IRE1α signalling to lipid metabolism in TNBC. This system biology framework enables the systematic exploration of regulation of metabolic pathways by IRE1α and represents a novel resource for the study of non-canonical IRE1α functions.
 
 <!-- TABLE OF CONTENTS -->
 <details open="open">
