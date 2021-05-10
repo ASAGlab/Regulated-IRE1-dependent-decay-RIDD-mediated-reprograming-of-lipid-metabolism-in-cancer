@@ -22,7 +22,7 @@ In this study, we employed unbiased lipidomic and transcriptomic approaches to i
 <!-- DATA -->
 ## Data
 
-The following datasets are included in the repository:
+The following datasets and files are included in the repository:
 
 * Metasyx_MD.txt contains metabolomics measurement day normalized intensities of detected features (annotated and non-annotated). 30 samples that were exposed to the  IRE1α inhibitor or DMSO. Samples were collected at 24, 48 and 72h after the treatment. Five replicates were measured per each condition.
 
