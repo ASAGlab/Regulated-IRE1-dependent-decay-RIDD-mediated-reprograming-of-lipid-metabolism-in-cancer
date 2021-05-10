@@ -1,6 +1,6 @@
 # Regulated IRE1α-dependent decay (RIDD) mediated reprograming of lipid metabolism in cancer
 
-This repository contains materials and methods for the paper "Regulated IRE1α-dependent decay (RIDD)-mediated reprograming of lipid metabolism in cancer" by Almanza*, Mnich* et al., (2021)
+This repository contains materials and methods for the paper "Regulated IRE1α-dependent decay (RIDD)-mediated reprograming of lipid metabolism in cancer" by Almanza*, Mnich* et al., (2021). All data supporting the findings of this study are available in this repository.
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
