@@ -28,11 +28,14 @@ The following datasets are included in the repository:
 
 * Metasyx_Sample_Info.txt contains information about group structure and measurement order.
 
-* raw_counts.txt Raw RNAseq counts from featureCounts. 12 samples that were exposed to the IRE1α inhibitor or DMSO. Samples were collected at 8 and 24h after the treatment. Three replicates measured per each condition.
+* raw_counts.txt Raw RNAseq counts from featureCounts. 12 samples that were exposed to the IRE1α inhibitor (MKC8866) or DMSO. Samples were collected at 8 and 24h after the treatment. Three replicates measured per each condition.
 
 * sample_info.txt contains sample information for the RNAseq experiment.
 
-* 
+* Beatson_MS.txt contains lipidomics measurements. 12 samples divided into 4 biological groups: DMSO, MKC8866, PF-06424439 (DGAT2 inhibitor) and MKC8866 + PF-06424439 cotreatment. Samples were collected 72h after the treatment. Three replicates per each condition.
+
+* Beatson_sample_info.txt contains sample information for the Beatson lipidomics experiment
+
 
 <!-- SCRIPTS -->
 ## Scripts
