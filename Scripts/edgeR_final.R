@@ -74,7 +74,7 @@ cleanY = function(y, mod, svs) {
   return(y - t(as.matrix(X[,-c(1:P)]) %*% beta[-c(1:P),]))
 }
 
-cleaned_count <- as.data.frame(cleanY(eset, mod1, svobj$sv)) #you can also specify to not use all sva, just 1,2, etc.
+cleaned_count <- as.data.frame(cleanY(cpm(y), mod1, svobj$sv)) #you can also specify to not use all sva, just 1,2, etc.
 log_cleaned_count <- log2(cleaned_count)
 
 #
@@ -240,39 +240,31 @@ p + scale_fill_manual(values=my_palette) + geom_raster() + geom_tile(aes(fill = 
   theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12), axis.text.y = element_text(hjust = 1, size = 10))
 
 #### HEATMAP TG METABOLISM GENES
-# GO lists for TAG biosynthesis/catabolism
-TG_biosynthesis <- read.csv("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data//TG_biosynthesis.txt")
-TG_catabolism <- read.csv("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data//TG_catabolism.txt")
-
-# eset annotate
-log_cleaned_count <- merge(log_cleaned_count, todo_genes, by.x=0, by.y=1)
-log_cleaned_count_hits <- merge(log_cleaned_count, hits_combined$hgnc_symbol, by.x = 14, by.y = 1)
-TAG_genes <- as.data.frame(unique(c(TG_biosynthesis$GOBP_TRIGLYCERIDE_BIOSYNTHETIC_PROCESS, TG_catabolism$GOBP_TRIGLYCERIDE_CATABOLIC_PROCESS)))
-log_cleaned_count_hits_TAG <- merge(log_cleaned_count_hits, TAG_genes, by.x = 1, by.y = 1)
-row.names(log_cleaned_count_hits_TAG) <- log_cleaned_count_hits_TAG$hgnc_symbol
-log_cleaned_count_hits_TAG <- log_cleaned_count_hits_TAG[,-c(1,2,15)]
+# selected from literature
+log_cleaned_count_TG <- log_cleaned_count[ c("ENSG00000062282", "ENSG00000169692", "ENSG00000131408", "ENSG00000072310", "ENSG00000025434", "ENSG00000166035", "ENSG00000079435" ),]
+row.names(log_cleaned_count_TG) <- c("DGAT2", "AGPAT2", "NR1H2", "SREBF1", "NR1H3", "LIPC", "LIPE")
 
 # average eset for plotting heatmap
-TG_eset_avg <- data.frame("DMSO 8" = rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "DMSO 8"]), 
-                          "MKC8866 8" = rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "MKC8866 8"]), 
-                          "DMSO 24" = rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "DMSO 24"]), 
-                          "MKC8866 24" =rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "MKC8866 24"]))
-
+TG_eset_avg <- data.frame("DMSO 8" = rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "DMSO 8"]), 
+                          "MKC8866 8" = rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "MKC8866 8"]), 
+                          "DMSO 24" = rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "DMSO 24"]), 
+                          "MKC8866 24" =rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "MKC8866 24"]))
 
 my_palette <- colorRampPalette(c("navy","white","red"))(n = 299) # scale blue to red, or whatever colors
 pheatmap(TG_eset_avg, 
          cluster_cols = FALSE,
          cluster_rows = FALSE,
          scale = "row", 
-         color = my_palette, 
-         border_color = "black",
+         color = my_palette,
          fontsize_col = 11, 
+         border_color = NA,
          show_rownames = TRUE,
          show_colnames = TRUE,
          cellwidth = 18,
          cellheight = 18,
          angle_col = 45,
-         gaps_col = 2)
+         gaps_col = 2,
+         gaps_row = 5)
 
 
 ### CONTROL GENES EXPRESSION
