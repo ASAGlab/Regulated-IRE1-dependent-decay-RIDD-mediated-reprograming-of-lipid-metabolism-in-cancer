@@ -6,26 +6,14 @@ library("biomaRt")
 library("RColorBrewer")
 library("ggplot2")
 library("stringr")
-library("Glimma")
+library("reshape2")
+library("pheatmap")
 
-## load raw counts from edgeR
-eset <- read.delim("C:/Users/alman/Desktop/NUIG/RNAseq/mRNA/counts.txt", comment.char="#")
-counts_short <- eset[,7:30] # first 6 columns is annotation
-row.names(counts_short) <- eset$Geneid
+## load raw counts and sample info
+raw_counts <- read.delim("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/raw_counts.txt", sep="") 
+sample_info_RNAseq <- read.delim("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/sample_info_RNAseq.txt", sep="") 
 
-## metadata
-samples <- data.frame( groups = c("DMSO 8", "DMSO 24", "DMSO 24", "DMSO 8", "DMSO 8", "DMSO 24", "MKC8866 24", "MKC8866 8", "MKC8866 8", "MKC8866 8", "MKC8866 24", "MKC8866 24", "PACLITAXEL 8", "PACLITAXEL 24", "PACLITAXEL 24", "PACLITAXEL 24", "PACLITAXEL 8", "PACLITAXEL 8", "COTREATMENT 8", "COTREATMENT 8", "COTREATMENT 24", "COTREATMENT 24", "COTREATMENT 8", "COTREATMENT 24"),
-                       repeats = c("R1", "R3", "R2", "R3", "R2", "R1", "R3", "R2", "R1", "R3", "R2", "R1", "R1", "R2", "R3", "R1", "R2", "R3", "R3", "R1", "R2", "R1", "R2", "R3"),
-                       times = c("8", "24", "24", "8", "8", "24", "24", "8", "8", "8", "24", "24", "8", "24", "24", "24", "8", "8", "8", "8", "24", "24", "8", "24"),
-                       treatment = c("DMSO", "DMSO", "DMSO", "DMSO", "DMSO", "DMSO", "MKC8866", "MKC8866", "MKC8866", "MKC8866", "MKC8866", "MKC8866", "PACLITAXEL", "PACLITAXEL", "PACLITAXEL", "PACLITAXEL", "PACLITAXEL", "PACLITAXEL", "COTREATMENT", "COTREATMENT", "COTREATMENT", "COTREATMENT", "COTREATMENT", "COTREATMENT"))
-
-row.names(samples) <- substring(colnames(counts_short), 51, 56)
-colnames(counts_short) <- rownames(samples)
-
-# remove paclitaxel samples
-ind <- samples$treatment == "DMSO" | samples$treatment == "MKC8866"
-counts_short <- counts_short[,ind]
-samples <- samples[ind,]
+eset <- raw_counts[,7:18] # first 6 columns is annotation
 
 # Annotate genes 
 listEnsembl(GRCh=38)
@@ -34,7 +22,7 @@ ensembl = useMart("ensembl")
 ensembl = useDataset("hsapiens_gene_ensembl",mart=ensembl)
 todo_genes <- getBM(attributes=c('ensembl_gene_id','hgnc_symbol','chromosome_name'), mart=ensembl)
 
-genetable <- data.frame(gene.id=rownames(counts_short))
+genetable <- data.frame(gene.id=rownames(eset))
 genes <- merge(genetable, todo_genes, by.x= "gene.id", by.y="ensembl_gene_id", all.x=TRUE)
 
 dup <- genes$gene.id[duplicated(genes$gene.id)]
@@ -42,7 +30,7 @@ mat <- match(genetable$gene.id, genes$gene.id)
 genes <- genes[mat,]
 
 # create DGEobject
-y <- DGEList(counts=counts_short, samples=samples, genes=genes)
+y <- DGEList(counts=eset, samples=sample_info_RNAseq, genes=genes)
 names(y)
 
 # REMOVE LOW EXPRESSED GENES
@@ -54,7 +42,7 @@ cpm <- cpm(y)
 lcpm_pre <- cpm(y, log=TRUE)
 
 ## Normalisation by the method of trimmed mean of M-values (TMM)
-nsamples <- ncol(counts_short)
+nsamples <- ncol(eset)
 col <- brewer.pal(nsamples, "Paired")
 
 wee <- log2(y$counts)
@@ -74,7 +62,6 @@ mod1 <- model.matrix(~0 + groups, y$samples)
 mod0 <- model.matrix(~1, y$samples)
 
 svobj <- svaseq(cpm(y), mod1, mod0) 
-design <- cbind(mod1, svobj$sv)
 
 # "Clean" gene expression data
 cleanY = function(y, mod, svs) {
@@ -90,13 +77,17 @@ cleanY = function(y, mod, svs) {
 cleaned_count <- cleanY(cpm(y), mod1, svobj$sv) #you can also specify to not use all sva, just 1,2, etc.
 log_cleaned_count <- log2(cleaned_count)
 
+#
+boxplot(log_cleaned_count, las=2, col=col, main="")
+title(main="SVA normalised data",ylab="Log-cpm")
+
 ### PCA to inspect batch correction
 # no sva
 pca <- prcomp(t(na.omit(lcpm_pre)), center = T, scale. = T)
 summary(pca)
 eigs <- pca$sdev^2
 PCAi <- as.data.frame(pca$x)
-ggplot(PCAi , aes(PC1, PC2, col= samples$groups)) + geom_point(aes(size=3)) + geom_text(aes(label = row.names(PCAi)), vjust = -1, nudge_y = 1) + 
+ggplot(PCAi , aes(PC1, PC2, col= sample_info_RNAseq$groups)) + geom_point(aes(size=3)) + geom_text(aes(label = row.names(PCAi)), vjust = -1, nudge_y = 1) + 
   labs (y = paste("PC2", round(eigs[2] / sum(eigs), digits = 2)), x = paste("PC1", round(eigs[1] / sum(eigs), digits = 2))) + # substitute with % variances
   ggtitle("PCA. by treatment") +
   theme_bw() 
@@ -113,7 +104,7 @@ variances <- barplot(eig.veamos[, 2], names.arg=1:nrow(eig.veamos),main = "Varia
 lines(x = variances, eig.veamos[, 2], type="b", pch=19, col = "red")
 
 PCAi <- as.data.frame(pca$x)
-ggplot(PCAi , aes(PC1, PC2, col= samples$groups)) + geom_point(aes(size=3)) + geom_text(aes(label = row.names(PCAi)), vjust = -1, nudge_y = 1) + 
+ggplot(PCAi , aes(PC1, PC2, col= sample_info_RNAseq$groups)) + geom_point(aes(size=3)) + geom_text(aes(label = row.names(PCAi)), vjust = -1, nudge_y = 1) + 
   labs (y = paste("PC2", round(eigs[2] / sum(eigs), digits = 2)), x = paste("PC1", round(eigs[1] / sum(eigs), digits = 2))) + # substitute with % variances
   ggtitle("PCA. by treatment") +
   theme_bw() 
@@ -147,18 +138,14 @@ res_D24vsM24 <- topTags(D24vsM24, n=nrow(y))
 resultados_D24vsM24 <- as.data.frame(res_D24vsM24)
 topTags(D24vsM24) # just the top 10 by default
 
-table(resultados_D24vsM24$PValue < 0.05)
-
 ## 8 hours
 D8vsM8 <- glmLRT(fit, contrast = c(0,-1,0,1,0,0)) # -1 is the denominator (check design matrix)
 res_D8vsM8 <- topTags(D8vsM8, n=nrow(y))
 resultados_D8vsM8 <- as.data.frame(res_D8vsM8)
 topTags(D8vsM8) # just the top 10 by default
 
-table(resultados_D8vsM8$PValue < 0.05)
-
-write.csv(resultados_D24vsM24, "resultados_D24vsM24_ALL.csv")
-write.csv(resultados_D8vsM8, "resultados_D8vsM8_ALL.csv")
+write.table(resultados_D24vsM24, "results_D24vsM24_ALL.txt", sep = " ", dec = ".", row.names = TRUE, col.names = TRUE)
+write.table(resultados_D8vsM8, "results_D8vsM8_ALL.txt", sep = " ", dec = ".", row.names = TRUE, col.names = TRUE)
 
 ########################################
 ### Volcano plots
@@ -178,7 +165,8 @@ p + geom_point(aes(colour = resultados_D8vsM8$color, size = 1, alpha = 0.5)) +
   geom_hline(yintercept = -log10(0.05) ,linetype = 2, size = 1, color = "grey30") +
   annotate( "text", x = 2, y = 17,label = "N == 783",parse = TRUE, size=5) +
   annotate( "text", x = -2, y = 17,label = "N == 100",parse = TRUE, size=5) +
-  ggtitle("8 hours")
+  ggtitle("8 hours") +
+  theme(legend.position = "none")
   
 # 24 hours
 resultados_D24vsM24$color <- "grey"
@@ -195,43 +183,95 @@ p + geom_point(aes(colour = resultados_D24vsM24$color, size = 1, alpha = 0.5)) +
   annotate( "text", x = 2, y = 12,label = "N == 273",parse = TRUE, size=5) +
   annotate( "text", x = -2, y = 12,label = "N == 122",parse = TRUE, size=5) +
   ggtitle("24 hours") +
-  ylim(0, 15)
+  ylim(0, 15) +
+  theme(legend.position = "none")
+
+### Functional analysis of hits at 8&24h done with Bioinfominer
+### cutoff < 0.05 p.value & abs(log2 FC) > 0.25
+
+hits_8h <- resultados_D8vsM8$hgnc_symbol[resultados_D8vsM8$color != "grey"]
+hits_24 <- resultados_D24vsM24$hgnc_symbol[resultados_D24vsM24$color != "grey"]
+hits_combined <- as.data.frame(unique(c(hits_8h, hits_24)))
+
+### Identify all DEG annotated to lipid metabolism terms. At either time point
+### Download parent term GO_0044255 "cellular lipid metabolic process" and child terms
+### read GO signatures downloaded from MsigDB
+file_list <- list.files(path= "~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/",pattern='GO_', full.names = TRUE)
+nombres <- list.files(path= "~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/",pattern='GO_')
+
+signatures <- list()
+for (i in 1:length(file_list)){
+  temp_data <- read.csv(file_list[i]) 
+  signatures[i] <- temp_data #for each iteration, bind the new data to the building list
+}
+
+# create new columns and fill with NA
+for(i in 1:9) {                                   
+  new <- rep(NA, nrow(hits_combined))                       
+  hits_combined[ , ncol(hits_combined) + 1] <- new                  
+  colnames(hits_combined)[ncol(hits_combined)] <- paste0(nombres[i])
+}
+
+# fill columns with LOGICAL. Is gene present in each GO lipid list?
+for (i in 1:9){
+  hits_combined[,i +1] <- hits_combined$`unique(c(hits_8h, hits_24))` %in% signatures[[i]]
+}
+
+### for plotting, change TRUE/FALSE to 1/0
+hits_combined <- data.frame(lapply(hits_combined, function(x) {gsub("TRUE", 1, x)}))
+hits_combined <- data.frame(lapply(hits_combined, function(x) {gsub("FALSE", 0, x)}))
+hits_combined[,2:10] <- lapply(hits_combined[,2:10], function(x) { as.numeric(x)})
+
+hits_combined <- hits_combined[rowSums(hits_combined[,2:10])>1,] # remove non lipid genes
+colnames(hits_combined) <- c("hgnc_symbol","fatty_acid_metabolic_process", "neutral_lipid_metabolic_process", "membrane_lipid_metabolic_process", "phospholipid_metabolic_process", "isoprenoid_metabolic_process", "lipid_modification", "cellular_lipid_catabolic_process","cellular_lipid_metabolic_process", "glycerolipid_metabolic_process" )
+hits_combined <- hits_combined[,c(1,9,2,3,4,5,6,7,8,10)] # move parent GO term to column 2
+
+# absent/present heatmap
+my_palette <- colorRampPalette(c("grey90","grey0"))(n = 3) # or whatever colors
+
+melt2 <- melt(hits_combined, id.vars = 1, measure.vars = 2:10)
+melt2$value <- as.numeric(melt2$value)
+melt2 <-melt2[order(melt2$hgnc_symbol, decreasing = TRUE),]
+melt2$hgnc_symbol <- factor(melt2$hgnc_symbol, levels = c(unique(melt2$hgnc_symbol)))
+
+margin(5,5,5,5)
+p <- ggplot(melt2, aes(melt2$variable, melt2$hgnc_symbol, fill = factor(melt2$value)))
+p + scale_fill_manual(values=my_palette) + geom_raster() + geom_tile(aes(fill = factor(melt2$value)), colour = "grey50") +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 12), axis.text.y = element_text(hjust = 1, size = 10))
+
+#### HEATMAP TG METABOLISM GENES
+# GO lists for TAG biosynthesis/catabolism
+TG_biosynthesis <- read.csv("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data//TG_biosynthesis.txt")
+TG_catabolism <- read.csv("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data//TG_catabolism.txt")
+
+# eset annotate
+log_cleaned_count <- merge(log_cleaned_count, todo_genes, by.x=0, by.y=1)
+log_cleaned_count_hits <- merge(log_cleaned_count, hits_combined$hgnc_symbol, by.x = 14, by.y = 1)
+TAG_genes <- as.data.frame(unique(c(TG_biosynthesis$GOBP_TRIGLYCERIDE_BIOSYNTHETIC_PROCESS, TG_catabolism$GOBP_TRIGLYCERIDE_CATABOLIC_PROCESS)))
+log_cleaned_count_hits_TAG <- merge(log_cleaned_count_hits, TAG_genes, by.x = 1, by.y = 1)
+row.names(log_cleaned_count_hits_TAG) <- log_cleaned_count_hits_TAG$hgnc_symbol
+log_cleaned_count_hits_TAG <- log_cleaned_count_hits_TAG[,-c(1,2,15)]
+
+# average eset for plotting heatmap
+TG_eset_avg <- data.frame("DMSO 8" = rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "DMSO 8"]), 
+                          "MKC8866 8" = rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "MKC8866 8"]), 
+                          "DMSO 24" = rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "DMSO 24"]), 
+                          "MKC8866 24" =rowMeans(log_cleaned_count_hits_TAG[,sample_info_RNAseq$groups == "MKC8866 24"]))
 
 
-### glimmaVolcano
-### it saves interactive volcano in your working directory
-counts_8h <- cleaned_count[,samples$times == 8]
-counts_24h <- cleaned_count[,samples$times == 24]
-samples_8h <- samples[samples$times == 8,]
-samples_24h <- samples[samples$times == 24,]
+my_palette <- colorRampPalette(c("navy","white","red"))(n = 299) # scale blue to red, or whatever colors
+pheatmap(TG_eset_avg, 
+         cluster_cols = FALSE,
+         cluster_rows = FALSE,
+         scale = "row", 
+         color = my_palette, 
+         border_color = "black",
+         fontsize_col = 11, 
+         show_rownames = TRUE,
+         show_colnames = TRUE,
+         cellwidth = 18,
+         cellheight = 18,
+         angle_col = 45,
+         gaps_col = 2)
 
-uuu <- D8vsM8$table
 
-status_8h <-rep(0, 17268)
-status_8h[uuu$logFC > 0.25 & uuu$PValue < 0.05] <- 1
-status_8h[uuu$logFC < -0.25 & uuu$PValue < 0.05] <- -1
-table(status_8h)
-
-glimmaVolcano(D8vsM8,
-              counts=counts_8h,
-              anno=y$genes,
-              status = status_8h,
-              groups=samples_8h$groups,
-              samples=colnames(counts_8h),
-              transform.counts= "none",
-              main = "MKC8866/DMSO 8 hours")
-
-### 
-status_24h <-rep(0, 17268)
-status_24h[ooo$logFC > 0.25 & ooo$PValue < 0.05] <- 1
-status_24h[ooo$logFC < -0.25 & ooo$PValue < 0.05] <- -1
-table(status_24h)
-
-glimmaVolcano(D24vsM24,
-              counts=counts_24h,
-              anno=y$genes,
-              status = status_24h,
-              groups=samples_24h$groups,
-              samples=colnames(counts_24h),
-              transform.counts= "none",
-              main = "MKC8866/DMSO 24 hours")
