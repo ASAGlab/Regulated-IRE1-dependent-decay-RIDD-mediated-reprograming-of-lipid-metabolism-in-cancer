@@ -48,11 +48,19 @@ The following datasets and files are included in the repository:
 <!-- FIGURES -->
 ## Figures
 
+The scripts and data in this repository can generate the following figures from the main text and supplement:
+
+* Main text: Figure 1a-m, Figure 2b-c, Figure 3a-d
+
+* Supplementary information: Figure S1b-i, Figure S2a-c, Figure S3 b-e
+
 
 <!-- TABLES -->
 ## Tables
 
+* Differential Gene Expression analysis: for both time points 8 and 24 hours.
 
+* Functional analysis results: with Bioinfominer, GO BP colection. For both time points 8 and 24 hours.
 
 <!-- CONTACT -->
 ## Contact
