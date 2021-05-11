@@ -42,7 +42,9 @@ The following datasets and files are included in the repository:
 
 * edgeR_final.R: : performs the differential gene expression (DEG) analysis of the transcriptomic data in the paper. It generates Fig.2b,c & S3b,c,d,e figures
 
-*
+* Metasyx_final.R : performs analysis of Metasyx metabolomics data. It generates Figure 1a-m, Figure S1b-i 
+
+* Beatson_final.R : performs analysis of Beatson lipidomics data. It generates Figure 4a-d
 
 
 <!-- FIGURES -->
@@ -50,7 +52,7 @@ The following datasets and files are included in the repository:
 
 The scripts and data in this repository can generate the following figures from the main text and supplement:
 
-* Main text: Figure 1a-m, Figure 2b-c, Figure 3a-d
+* Main text: Figure 1a-m, Figure 2b-c, Figure 4a-d
 
 * Supplementary information: Figure S1b-i, Figure S2a-c, Figure S3 b-e
 
