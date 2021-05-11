@@ -74,7 +74,7 @@ cleanY = function(y, mod, svs) {
   return(y - t(as.matrix(X[,-c(1:P)]) %*% beta[-c(1:P),]))
 }
 
-cleaned_count <- cleanY(cpm(y), mod1, svobj$sv) #you can also specify to not use all sva, just 1,2, etc.
+cleaned_count <- as.data.frame(cleanY(eset, mod1, svobj$sv)) #you can also specify to not use all sva, just 1,2, etc.
 log_cleaned_count <- log2(cleaned_count)
 
 #
@@ -273,5 +273,23 @@ pheatmap(TG_eset_avg,
          cellheight = 18,
          angle_col = 45,
          gaps_col = 2)
+
+
+### CONTROL GENES EXPRESSION
+# DNAJB9 - ENSG00000128590 
+plotting_genes <-  as.data.frame(t(y$counts))
+
+# using ensembl identifier
+sample_info_RNAseq$groups <- factor(sample_info_RNAseq$groups, levels = c("DMSO 8" , "MKC8866 8", "DMSO 24", "MKC8866 24"))
+
+p <- ggplot(plotting_genes, aes(sample_info_RNAseq$groups, plotting_genes$ENSG00000128590, fill = sample_info_RNAseq$groups)) # change for any other gene here
+p + geom_boxplot(outlier.shape = NA, size =2, alpha = 0.5) + 
+  geom_point(aes(), size = 2, position = position_jitterdodge()) + 
+  labs(x="", y = "DNAJB9 norm counts", element_text(face = "bold", angle = 0)) + 
+  scale_fill_manual(values =  c("white", "red", "white", "red")) + # change colors here 
+  theme(panel.background = element_rect( colour = "grey50"), axis.text.x = element_text(angle = 45, hjust = 1, size = 12)) + 
+  theme_bw() +
+  theme(text = element_text(size=20))
+
 
 
