@@ -40,7 +40,7 @@ The following datasets and files are included in the repository:
 <!-- SCRIPTS -->
 ## Scripts
 
-* edgeR_final.R: : performs the differential gene expression (DEG) analysis of the transcriptomic data in the paper. It generates S3 b,c,d,e figures. 
+* edgeR_final.R: : performs the differential gene expression (DEG) analysis of the transcriptomic data in the paper. It generates Fig.2b,c & S3b,c,d,e figures
 
 *
 
