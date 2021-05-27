@@ -44,7 +44,7 @@ The following datasets and files are included in the repository:
 
 * Metasyx_final.R : performs analysis of Metasyx metabolomics data. It generates Figure 1a-m, Figure S1b-i 
 
-* Beatson_final.R : performs analysis of Beatson lipidomics data. It generates Figure 4a-d
+* Beatson_final.R : performs analysis of Beatson lipidomics TAG data. It generates Figure 4a-d
 
 
 <!-- FIGURES -->
