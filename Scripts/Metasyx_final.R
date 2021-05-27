@@ -5,11 +5,12 @@ library("colorRamps")
 library("pheatmap")
 library("stringr")
 library("reshape2")
+library("plyr")
 
 # indicate path to .csv file with average values for each replicate
 # Load data and metadata 
-todo_treatments <- read.csv("C:/Users/alman/Desktop/Manuscript/METASYX/Metasyx_MD.csv")
-Sample_Info <- read.csv("C:/Users/alman/Desktop/Manuscript/METASYX/Metasyx_Sample_Info.csv")
+todo_treatments <- read.csv("C:/Users/alman/Documents/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/Metasyx_MD.csv")
+Sample_Info <- read.csv("C:/Users/alman/Documents/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/Metasyx_Sample_Info.csv")
 
 # MSTUS NORMALIZATION (normalized to sum of peak areas)
 MSTUS_norm <- sweep(todo_treatments[,12:ncol(todo_treatments)] ,2,colSums(todo_treatments[,12:ncol(todo_treatments)])/100000000,`/`)
@@ -152,7 +153,7 @@ for (i in unique(solo_lipids$Lipid_Class)) {
   #ggsave( paste( "time", i, ".pdf"), plot=last_plot(), width=8, height=5)
 }
 
-#or plot them all together
+#or plot them all together to evaluate in 1 look
 library(gridExtra)
 p <- list()
 for (i in unique(solo_lipids$Lipid_Class)) {
@@ -160,5 +161,85 @@ for (i in unique(solo_lipids$Lipid_Class)) {
 }
 do.call(grid.arrange,p)
 
+### saturation & elongation indexes TGs
+# plot by saturation
+# divided in 0, 1,2,3+ saturated bonds
+satuplot = function(lipido, color) {
+  ooo <- subset(final_avg, final_avg$Lipid_Class == lipido)
+  uuu <- unique(ooo$saturation)
+  ooo$saturange <- NA
+  ooo$saturange[ooo$saturation == 0] <-  "0"
+  ooo$saturange[ooo$saturation == 1] <-  "1"
+  ooo$saturange[ooo$saturation == 2] <-  "2"
+  ooo$saturange[ooo$saturation >= 3] <-  "3+"
+  average_tri <- ddply(ooo,21,numcolwise(mean))
+  average_tri$se24 <- c(sd(ooo$DvsM24[ooo$saturange == "0"]), sd(ooo$DvsM24[ooo$saturange == "1"]), sd(ooo$DvsM24[ooo$saturange == "2"]), sd(ooo$DvsM24[ooo$saturange == "3+"]))
+  average_tri$se48 <- c(sd(ooo$DvsM24[ooo$saturange == "0"]), sd(ooo$DvsM48[ooo$saturange == "1"]), sd(ooo$DvsM48[ooo$saturange == "2"]), sd(ooo$DvsM48[ooo$saturange == "3+"]))
+  average_tri$se72 <- c(sd(ooo$DvsM24[ooo$saturange == "0"]), sd(ooo$DvsM72[ooo$saturange == "1"]), sd(ooo$DvsM72[ooo$saturange == "2"]), sd(ooo$DvsM72[ooo$saturange == "3+"]))
+  melt2 <- melt(average_tri, id.vars = 1, measure.vars = 14:16)
+  melt3 <- melt(average_tri, id.vars = 1, measure.vars = 19:21)
+  melt_todo <- cbind(melt2, melt3[,3])
+  melt_todo$variable <- gsub("DvsM24", "24h", melt_todo$variable)
+  melt_todo$variable <- gsub("DvsM48", "48h", melt_todo$variable)
+  melt_todo$variable <- gsub("DvsM72", "72h", melt_todo$variable)
+  melt_dots <- melt(ooo, id.vars = 21, measure.vars = 16:18)
+  melt_dots$variable <- gsub("DvsM24", "24h", melt_dots$variable)
+  melt_dots$variable <- gsub("DvsM48", "48h", melt_dots$variable)
+  melt_dots$variable <- gsub("DvsM72", "72h", melt_dots$variable)
+  numero <- round(max(melt_dots$value + 0.1), digits = 1)
+  numero2 <- round(min(melt_dots$value - 0.1), digits = 1)
+  ggplot() +
+    geom_bar(data=melt_todo, aes(fill=melt_todo$variable, y=melt_todo$value,x=melt_todo$saturange,ymin=melt_todo$value-melt_todo$`melt3[, 3]`,ymax=melt_todo$value+melt_todo$`melt3[, 3]`), position="dodge", stat="identity", color="black") +
+    geom_errorbar(data=melt_todo, aes(fill=melt_todo$variable, y=melt_todo$value,x=melt_todo$saturange,ymin=melt_todo$value-melt_todo$`melt3[, 3]`,ymax=melt_todo$value+melt_todo$`melt3[, 3]`), position="dodge",stat="identity") +
+    geom_point(data=melt_dots,pch=21, colour="black", aes(fill=melt_dots$variable ,group=melt_dots$variable, y=melt_dots$value,x=melt_dots$saturange), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.9)) +
+    scale_fill_manual(values= c("white", "grey50", color)) +
+    labs(x = "number of double bonds", y = "log2 FC (MKC8866 vs control)", element_text(face = "bold", angle = 0)) +
+    ylim(numero2, numero)
+}
+
+# elongation
+# plot by total chain lenght
+# divided into ranges matching the 4 quartiles
+
+lenghtplot = function(lipido, color) {
+  ooo <- subset(final_avg, final_avg$Lipid_Class == lipido)
+  uuu <- summary(ooo$lenght)
+  ooo$saturange <- NA
+  ooo$saturange[ooo$lenght <= round(uuu[[2]])] <- paste( "<" , round(uuu[[2]]))
+  ooo$saturange[ooo$lenght > round(uuu[[2]])] <- paste(round(uuu[[2]]),"-", round(uuu[[3]]))
+  ooo$saturange[ooo$lenght > round(uuu[[3]])] <- paste(round(uuu[[3]]),"-", round(uuu[[5]]))
+  ooo$saturange[ooo$lenght >= round(uuu[[5]])] <- paste( ">" , round(uuu[[5]]))
+  average_tri <- ddply(ooo,21,numcolwise(mean))
+  average_tri$se24 <- c(sd(ooo$DvsM24[ooo$saturange == paste( "<" , round(uuu[[2]]))]), sd(ooo$DvsM24[ooo$saturange == paste(round(uuu[[2]]),"-", round(uuu[[3]]))]), sd(ooo$DvsM24[ooo$saturange == paste(round(uuu[[3]]),"-", round(uuu[[5]]))]), sd(ooo$DvsM24[ooo$saturange == paste( ">" , round(uuu[[5]]))]))
+  average_tri$se48 <- c(sd(ooo$DvsM24[ooo$saturange == paste( "<" , round(uuu[[2]]))]), sd(ooo$DvsM48[ooo$saturange == paste(round(uuu[[2]]),"-", round(uuu[[3]]))]), sd(ooo$DvsM48[ooo$saturange == paste(round(uuu[[3]]),"-", round(uuu[[5]]))]), sd(ooo$DvsM48[ooo$saturange == paste( ">" , round(uuu[[5]]))]))
+  average_tri$se72 <- c(sd(ooo$DvsM24[ooo$saturange == paste( "<" , round(uuu[[2]]))]), sd(ooo$DvsM72[ooo$saturange == paste(round(uuu[[2]]),"-", round(uuu[[3]]))]), sd(ooo$DvsM72[ooo$saturange == paste(round(uuu[[3]]),"-", round(uuu[[5]]))]), sd(ooo$DvsM72[ooo$saturange == paste( ">" , round(uuu[[5]]))]))
+  melt2 <- melt(average_tri, id.vars = 1, measure.vars = 14:16)
+  melt3 <- melt(average_tri, id.vars = 1, measure.vars = 19:21)
+  melt_todo <- cbind(melt2, melt3[,3])
+  melt_todo$variable <- gsub("DvsM24", "24h", melt_todo$variable)
+  melt_todo$variable <- gsub("DvsM48", "48h", melt_todo$variable)
+  melt_todo$variable <- gsub("DvsM72", "72h", melt_todo$variable)
+  melt_dots <- melt(ooo, id.vars = 21, measure.vars = 16:18)
+  melt_dots$variable <- gsub("DvsM24", "24h", melt_dots$variable)
+  melt_dots$variable <- gsub("DvsM48", "48h", melt_dots$variable)
+  melt_dots$variable <- gsub("DvsM72", "72h", melt_dots$variable)
+  numero <- round(max(melt_dots$value + 0.1), digits = 1)
+  numero2 <- round(min(melt_dots$value - 0.1), digits = 1)
+  melt_todo$saturange <- factor(melt_todo$saturange, levels = c(paste( "<" , round(uuu[[2]])), paste(round(uuu[[2]]),"-", round(uuu[[3]])), paste(round(uuu[[3]]),"-", round(uuu[[5]])), paste( ">" , round(uuu[[5]]))))
+  ggplot() +
+    geom_bar(data=melt_todo, aes(fill=melt_todo$variable, y=melt_todo$value,x=melt_todo$saturange,ymin=melt_todo$value-melt_todo$`melt3[, 3]`,ymax=melt_todo$value+melt_todo$`melt3[, 3]`), position="dodge", stat="identity", color="black") +
+    geom_errorbar(data=melt_todo, aes(fill=melt_todo$variable, y=melt_todo$value,x=melt_todo$saturange,ymin=melt_todo$value-melt_todo$`melt3[, 3]`,ymax=melt_todo$value+melt_todo$`melt3[, 3]`), position="dodge",stat="identity") +
+    geom_point(data=melt_dots,pch=21, colour="black", aes(fill=melt_dots$variable ,group=melt_dots$variable, y=melt_dots$value,x=melt_dots$saturange), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.9)) +
+    scale_fill_manual(values= c("white", "grey50", color)) +
+    labs(x = "number of carbons", y = "log2 FC (MKC8866 vs control)", element_text(face = "bold", angle = 0)) +
+    ylim(numero2, numero)
+}
+
+
+# For TAGs
+unique(final_avg$Lipid_Class)
+
+satuplot("Phosphatidylcholine"  , "#00FF00"  )
+lenghtplot("Phosphatidylcholine"  , "#00FF00"  )
 
 
