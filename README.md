@@ -60,7 +60,7 @@ The scripts and data in this repository can generate the following figures from 
 <!-- TABLES -->
 ## Tables
 
-* Differential Gene Expression analysis: for both time points 8 and 24 hours.
+* Differential Gene Expression analysis. For both time points 8 and 24 hours.
 
 * Functional analysis results: with Bioinfominer, GO BP colection. For both time points 8 and 24 hours.
 
