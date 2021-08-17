@@ -11,13 +11,23 @@ In this study, we employed unbiased lipidomic and transcriptomic approaches to i
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
-    <li><a href="#Data">Data</a></li>
     <li><a href="#Scripts">Scripts</a></li>
+    <li><a href="#Data">Data</a></li>
     <li><a href="#Figures">Figures</a></li>
     <li><a href="#Tables">Tables</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
+
+<!-- SCRIPTS -->
+## Scripts
+
+* edgeR_final.R: : performs the differential gene expression (DEG) analysis of the transcriptomic data in the paper. It generates Fig.2b,c & S3b,c,d,e figures
+
+* Metasyx_final.R : performs analysis of Metasyx metabolomics data. It generates Figure 1a-m, Figure S1b-i 
+
+* Beatson_final.R : performs analysis of Beatson lipidomics TAG data. It generates Figure 4a-d
+
 
 <!-- DATA -->
 ## Data
@@ -35,16 +45,6 @@ The following datasets and files are included in the repository:
 * Beatson_MS.txt contains lipidomics measurements. 12 samples divided into 4 biological groups: DMSO, MKC8866, PF-06424439 (DGAT2 inhibitor) and MKC8866 + PF-06424439 cotreatment. Samples were collected 72h after the treatment. Three replicates per each condition.
 
 * Beatson_sample_info.txt contains sample information for the Beatson lipidomics experiment
-
-
-<!-- SCRIPTS -->
-## Scripts
-
-* edgeR_final.R: : performs the differential gene expression (DEG) analysis of the transcriptomic data in the paper. It generates Fig.2b,c & S3b,c,d,e figures
-
-* Metasyx_final.R : performs analysis of Metasyx metabolomics data. It generates Figure 1a-m, Figure S1b-i 
-
-* Beatson_final.R : performs analysis of Beatson lipidomics TAG data. It generates Figure 4a-d
 
 
 <!-- FIGURES -->
