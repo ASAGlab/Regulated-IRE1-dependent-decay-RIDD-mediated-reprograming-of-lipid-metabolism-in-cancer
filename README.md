@@ -44,7 +44,7 @@ The following datasets and files are included in the repository:
 
 * Metasyx_final.R : performs analysis of Metasyx metabolomics data. It generates Figure 1a-m, Figure S1b-i 
 
-* Beatson_final.R : performs analysis of Beatson lipidomics data. It generates Figure 4a-d
+* Beatson_final.R : performs analysis of Beatson lipidomics TAG data. It generates Figure 4a-d
 
 
 <!-- FIGURES -->
@@ -60,7 +60,7 @@ The scripts and data in this repository can generate the following figures from 
 <!-- TABLES -->
 ## Tables
 
-* Differential Gene Expression analysis: for both time points 8 and 24 hours.
+* Differential Gene Expression analysis. For both time points 8 and 24 hours.
 
 * Functional analysis results: with Bioinfominer, GO BP colection. For both time points 8 and 24 hours.
 

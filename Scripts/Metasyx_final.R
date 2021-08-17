@@ -41,7 +41,7 @@ mod1 <- model.matrix(~0 + Group, Sample_Info)
 mod0 <- model.matrix(~1, Sample_Info)
 svobj <- svaseq(as.matrix(MSTUS_norm), mod1, mod0) 
 
-# "Clean" gene expression data
+# "Clean" dataset
 cleanY = function(y, mod, svs) {
   X = cbind(mod, svs)
   Hat = solve(t(X) %*% X) %*% t(X)
