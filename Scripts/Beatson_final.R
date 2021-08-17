@@ -8,8 +8,8 @@ library("pheatmap")
 library("ggpubr")
 
 # indicate path to .csv file with average values for each replicate
-todo_treatments <- read.delim("C:/Users/alman/Documents/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/Beatson_MS.txt", sep = " ")
-sample_info <- read.delim("C:/Users/alman/Documents/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/Beatson_sample_info.txt", sep = " ")
+todo_treatments <- read.delim(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/Beatson_MS.txt"), sep = " ")
+sample_info <- read.delim(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/Beatson_sample_info.txt"), sep = " ")
 
 # MSTUS NORMALIZATION (normalized to sum of peak areas)
 MSTUS_norm <- sweep(todo_treatments[,3:ncol(todo_treatments)] ,2,colSums(todo_treatments[,3:ncol(todo_treatments)])/100000000,`/`)
