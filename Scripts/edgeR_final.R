@@ -10,8 +10,8 @@ library("reshape2")
 library("pheatmap")
 
 ## load raw counts and sample info
-raw_counts <- read.delim("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/raw_counts.txt", sep="") 
-sample_info_RNAseq <- read.delim("~/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/sample_info_RNAseq.txt", sep="") 
+raw_counts <- read.delim(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/raw_counts.txt"), sep="", quote = "") 
+sample_info_RNAseq <- read.delim(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/sample_info_RNAseq.txt"), sep="") 
 
 eset <- raw_counts[,7:18] # first 6 columns is annotation
 
