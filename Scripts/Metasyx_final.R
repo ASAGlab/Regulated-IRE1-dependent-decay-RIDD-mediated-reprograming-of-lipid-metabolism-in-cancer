@@ -9,8 +9,8 @@ library("plyr")
 
 # indicate path to .csv file with average values for each replicate
 # Load data and metadata 
-todo_treatments <- read.csv("C:/Users/alman/Documents/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/Metasyx_MD.csv")
-Sample_Info <- read.csv("C:/Users/alman/Documents/GitHub/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/Data/Metasyx_Sample_Info.csv")
+todo_treatments <- read.csv(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/Metasyx_MD.csv"))
+Sample_Info <- read.csv(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/Metasyx_sample_info.csv"))
 
 # MSTUS NORMALIZATION (normalized to sum of peak areas)
 MSTUS_norm <- sweep(todo_treatments[,12:ncol(todo_treatments)] ,2,colSums(todo_treatments[,12:ncol(todo_treatments)])/100000000,`/`)
@@ -76,15 +76,13 @@ final_avg <- as.data.frame(cbind(rowMeans(cleaned_count[,1:5]), rowMeans(cleaned
 colnames(final_avg) <- c( "DMSO24", "MKC24", "DMSO48", "MKC48", "DMSO72", "MKC72")
 final_avg <- cbind(todo_treatments[,c(1,2,10)], final_avg)
 
-# standard error of the mean (SEM)
-std <- function(x) sd(x)/sqrt(length(x)) # SD divided by square root of sample number
-
-final_avg$DMSO24.se <- apply(cleaned_count[,1:5], 1, function(x) std(as.numeric(x)))
-final_avg$MKC24.se <- apply(cleaned_count[,6:10], 1, function(x) std(as.numeric(x)))
-final_avg$DMSO48.se <- apply(cleaned_count[,11:15], 1, function(x) std(as.numeric(x)))
-final_avg$MKC48.se <- apply(cleaned_count[,16:20], 1, function(x) std(as.numeric(x)))
-final_avg$DMSO72.se <- apply(cleaned_count[,21:25], 1, function(x) std(as.numeric(x)))
-final_avg$MKC72.se <- apply(cleaned_count[,26:30], 1, function(x) std(as.numeric(x)))
+# standard deviation (SD)
+final_avg$DMSO24.sd <- apply(cleaned_count[,1:5], 1, function(x) sd(as.numeric(x)))
+final_avg$MKC24.sd <- apply(cleaned_count[,6:10], 1, function(x) sd(as.numeric(x)))
+final_avg$DMSO48.sd <- apply(cleaned_count[,11:15], 1, function(x) sd(as.numeric(x)))
+final_avg$MKC48.sd <- apply(cleaned_count[,16:20], 1, function(x) sd(as.numeric(x)))
+final_avg$DMSO72.sd <- apply(cleaned_count[,21:25], 1, function(x) sd(as.numeric(x)))
+final_avg$MKC72.sd <- apply(cleaned_count[,26:30], 1, function(x) sd(as.numeric(x)))
 
 # MKC/DMSO log2 fold changes
 final_avg$DvsM24h <- final_avg$MKC24 - final_avg$DMSO24
