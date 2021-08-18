@@ -9,7 +9,7 @@ library("plyr")
 
 # indicate path to .csv file with average values for each replicate
 # Load data and metadata 
-# data = samples in columns, features in rows
+# data: samples in columns, features in rows
 todo_treatments <- read.csv(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/Metasyx_MD.csv"))
 Sample_Info <- read.csv(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/Metasyx_sample_info.csv"))
 
