@@ -138,8 +138,8 @@ timeplot = function(lipido, color) {
     ylim(numero2, numero) +
     labs(x="", y = "Log2 FC (MKC8866/DMSO)", element_text(face = "bold", angle = 0,)) + 
     annotate('text', x = c("24h", "48h", "72h"), y = numero ,label = c(paste("P-value==", t.test(ooo$DvsM24, mu = 0, alternative = "two.sided")$p.value),
-                                                                   paste("P-value==", t.test(ooo$DvsM48, mu = 0, alternative = "two.sided")$p.value),
-                                                                   paste("P-value==", t.test(ooo$DvsM72, mu = 0, alternative = "two.sided")$p.value)) ,parse = TRUE, size=3)
+                                                                       paste("P-value==", t.test(ooo$DvsM48, mu = 0, alternative = "two.sided")$p.value),
+                                                                       paste("P-value==", t.test(ooo$DvsM72, mu = 0, alternative = "two.sided")$p.value)) ,parse = TRUE, size=3)
 }
 
 
