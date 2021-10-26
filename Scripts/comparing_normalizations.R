@@ -1,5 +1,5 @@
 # comparing metabolomics normalization methods
-# MSTUS vs LOESS vs QUANTILE vs PARETO 
+# MSTUS vs QUANTILE vs PARETO vs LOESS
 library("limma")
 library("RColorBrewer")
 library("ggplot2")
@@ -10,7 +10,6 @@ todo_treatments <- read.csv(url("https://raw.githubusercontent.com/ASAGlab/Regul
 Sample_Info <- read.csv(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/Metasyx_sample_info.csv"))
 
 eset <- todo_treatments[,12:ncol(todo_treatments)]
-log2_eset <- log2(eset)
 
 # MSTUS NORMALIZATION (normalized to sum of peak areas)
 MSTUS_norm <- sweep(eset ,2,colSums(eset)/100000000,`/`)
@@ -36,10 +35,6 @@ quantile_normalisation <- function(df){
 QUANTILE_norm <- as.data.frame(quantile_normalisation(eset))
 row.names(QUANTILE_norm) <- todo_treatments$Peak_ID
 
-# LOESS NORMALIZATION (Local weighted regression, function from Limma package)
-LOESS_norm <- as.data.frame(normalizeCyclicLoess(log2_eset, weights = NULL, span=0.7, iterations = 3, method = "fast"))
-row.names(LOESS_norm) <- todo_treatments$Peak_ID
-
 # SVA BATCH EFFECT CORRECTION
 cleanY = function(y, mod, svs) {
   X = cbind(mod, svs)
@@ -59,17 +54,16 @@ cleaned_count <- cleanY(x, mod1, svobj$sv)
 }
 
 # sva batch effect adjust each norm data
-MSTUS_norm_c <- log2(sva_corr(MSTUS_norm))
+MSTUS_norm_c <- sva_corr(log2(MSTUS_norm))
 PARETO_norm_c <- log2(sva_corr(PARETO_norm))
-QUANTILE_norm_c <- log2(sva_corr(QUANTILE_norm))
-LOESS_norm_c <- sva_corr(LOESS_norm)
+QUANTILE_norm_c <- sva_corr(log2(QUANTILE_norm))
 
 # HISTOGRAMS
 nsamples <- length(unique(Sample_Info$Group))
 col <- brewer.pal(nsamples, "Paired")
 col <- rep(col, each=5)
 
-boxplot(log2_eset, las=2, col=col, main="")
+boxplot(log2(eset), las=2, col=col, main="")
 title(main="Raw data",ylab="")
 
 boxplot(MSTUS_norm_c, las=2, col=col, main="")
@@ -80,9 +74,6 @@ title(main="PARETO scaled data",ylab="")
 
 boxplot(QUANTILE_norm_c, las=2, col=col, main="")
 title(main="QUANTILE normalised data",ylab="")
-
-boxplot(LOESS_norm, las=2, col=col, main="")
-title(main="LOESS normalised data",ylab="")
 
 # PCA for each
 pca_explore = function(x){ 
@@ -96,11 +87,10 @@ ggplot(PCAi , aes(PC1, PC2, col= Sample_Info$Group)) + geom_point(aes(size=3)) +
   theme_bw() 
 }
 
-pca_explore(log2_eset)
+pca_explore(log2(eset))
 pca_explore(MSTUS_norm_c)
 pca_explore(PARETO_norm_c)
 pca_explore(QUANTILE_norm_c)
-pca_explore(LOESS_norm)
 
 # Correlation of logFC for metabolites
 FC_todo = function(x){ 
@@ -114,19 +104,43 @@ todo <- c(DvsM24h, DvsM48h, DvsM72h)
 todo_junto <- data.frame( MSTUS = FC_todo(MSTUS_norm_c),
                           PARETO = FC_todo(PARETO_norm_c),
                           QUANTILE = FC_todo(QUANTILE_norm_c),
-                          LOESS = FC_todo(LOESS_norm),
-                          time_point = c(rep("24h", 798), rep("48h", 798), rep("72h", 798)))
-
+                          time_point = c(rep("24h", 798), rep("48h", 798), rep("72h", 798)),
+                          ID = rep(row.names(MSTUS_norm_c), 3))
 
 ggpairs(todo_junto,
-        columns = 1:4,
+        columns = 1:3,
         aes(color=todo_junto$time_point, alpha = 0.5))
 
 
 # TAKE A LOOK AT TAGs
+annotation <- todo_treatments[,c(1,10)]
+ind <- subset(annotation, annotation$Lipid_Class == "Triacylglyceride")
+
+TAGs <- merge(ind, todo_junto, by.x =1, by.y = 5)
 
 
+ggplot() +  geom_point(data=TAGs ,pch=21, size=3, colour="black", aes(fill= TAGs$Lipid_Class, group= TAGs$time_point, y= TAGs$MSTUS, x= TAGs$time_point), position=position_jitterdodge(jitter.width=0.4, dodge.width=0.9)) +
+  theme_classic() +
+  theme(text = element_text(size=20), axis.title.y = element_text(size=16), legend.position = "none") +
+  ggtitle("MSTUS") +
+  geom_hline(yintercept = 0 ,linetype = 2, size = 1, color = "black") +
+  labs(x="", y = "Log2 FC (MKC8866/DMSO)", element_text(face = "bold", angle = 0,)) +
+  ylim(-1, 1)
 
 
+ggplot() +  geom_point(data=TAGs ,pch=21, size=3, colour="black", aes(fill= TAGs$Lipid_Class, group= TAGs$time_point, y= TAGs$PARETO, x= TAGs$time_point), position=position_jitterdodge(jitter.width=0.4, dodge.width=0.9)) +
+  theme_classic() +
+  theme(text = element_text(size=20), axis.title.y = element_text(size=16), legend.position = "none") +
+  ggtitle("PARETO") +
+  geom_hline(yintercept = 0 ,linetype = 2, size = 1, color = "black") +
+  labs(x="", y = "Log2 FC (MKC8866/DMSO)", element_text(face = "bold", angle = 0,)) +
+  ylim(-1, 1)
 
 
+ggplot() +  geom_point(data=TAGs ,pch=21, size=3, colour="black", aes(fill= TAGs$Lipid_Class, group= TAGs$time_point, y= TAGs$QUANTILE, x= TAGs$time_point), position=position_jitterdodge(jitter.width=0.4, dodge.width=0.9)) +
+  theme_classic() +
+  theme(text = element_text(size=20), axis.title.y = element_text(size=16), legend.position = "none") +
+  ggtitle("QUANTILE") +
+  geom_hline(yintercept = 0 ,linetype = 2, size = 1, color = "black") +
+  labs(x="", y = "Log2 FC (MKC8866/DMSO)", element_text(face = "bold", angle = 0,)) +
+  ylim(-1, 1)
