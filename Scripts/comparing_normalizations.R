@@ -67,13 +67,13 @@ boxplot(log2(eset), las=2, col=col, main="")
 title(main="Raw data",ylab="")
 
 boxplot(MSTUS_norm_c, las=2, col=col, main="")
-title(main="MSTUS norm data",ylab="")
+title(main="MSTUS + sva norm data",ylab="")
 
 boxplot(PARETO_norm_c, las=2, col=col, main="")
-title(main="PARETO scaled data",ylab="")
+title(main="PARETO + sva scaled data",ylab="")
 
 boxplot(QUANTILE_norm_c, las=2, col=col, main="")
-title(main="QUANTILE normalised data",ylab="")
+title(main="QUANTILE + sva normalised data",ylab="")
 
 # PCA for each
 pca_explore = function(x){ 
