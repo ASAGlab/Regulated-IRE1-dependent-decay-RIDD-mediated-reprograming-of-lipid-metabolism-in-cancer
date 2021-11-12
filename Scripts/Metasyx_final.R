@@ -53,7 +53,7 @@ cleanY = function(y, mod, svs) {
   return(y - t(as.matrix(X[,-c(1:P)]) %*% beta[-c(1:P),]))
 }
 
-cleaned_count <- cleanY(log_MSTUS_norm, mod1, svobj$sv[,1:4]) # how many sv to use (the more, more transformation)
+cleaned_count <- cleanY(log_MSTUS_norm, mod1, svobj$sv[,1:3]) # how many sv to use (the more, more transformation)
 
 ### PCA after sva
 pca <- prcomp(t(na.omit(cleaned_count)), center = T, scale. = T)
@@ -193,7 +193,8 @@ satuplot = function(lipido, color) {
     geom_point(data=melt_dots,pch=21, colour="black", aes(fill=melt_dots$variable ,group=melt_dots$variable, y=melt_dots$value,x=melt_dots$saturange), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.9)) +
     scale_fill_manual(values= c("white", "grey50", color)) +
     labs(x = "number of double bonds", y = "log2 FC (MKC8866 vs control)", element_text(face = "bold", angle = 0)) +
-    ylim(numero2, numero)
+    ylim(-1, 1) +
+    geom_hline(yintercept = 0, linetype="dashed", size = 2)
 }
 
 # elongation
@@ -231,14 +232,15 @@ lenghtplot = function(lipido, color) {
     geom_point(data=melt_dots,pch=21, colour="black", aes(fill=melt_dots$variable ,group=melt_dots$variable, y=melt_dots$value,x=melt_dots$saturange), position=position_jitterdodge(jitter.width=0.1, dodge.width=0.9)) +
     scale_fill_manual(values= c("white", "grey50", color)) +
     labs(x = "number of carbons", y = "log2 FC (MKC8866 vs control)", element_text(face = "bold", angle = 0)) +
-    ylim(numero2, numero)
+    ylim(-1, 1) +
+    geom_hline(yintercept = 0, linetype="dashed", size = 2)
 }
 
 
 # For TAGs
 unique(final_avg$Lipid_Class)
 
-satuplot("Phosphatidylcholine"  , "#00FF00"  )
-lenghtplot("Phosphatidylcholine"  , "#00FF00"  )
+satuplot("Fatty Acid"  , "limegreen"  )
+lenghtplot("Fatty Acid"  , "limegreen"  )
 
 
