@@ -72,6 +72,23 @@ ggplot(PCAi , aes(PC1, PC2, col= Sample_Info$Group)) + geom_point(aes(size=3)) +
   ggtitle("PCA. by treatment") +
   theme_bw() 
 
+
+# fold changes for each replicate individually
+FCs <- todo_treatments[,c(2,10)]
+ind <- which(Sample_Info$Treatment == "DMSO")
+
+for (i in list(ind)){
+  FCs$i <- cleaned_count[,i+5] - cleaned_count[,i]
+}
+
+# duplicated entries
+FCsX <- ddply(FCs,1,numcolwise(mean))
+
+
+
+
+
+
 ### averaged eset for plotting
 final_avg <- as.data.frame(cbind(rowMeans(cleaned_count[,1:5]), rowMeans(cleaned_count[,6:10]), rowMeans(cleaned_count[,11:15]), rowMeans(cleaned_count[,16:20]), rowMeans(cleaned_count[,21:25]), rowMeans(cleaned_count[,26:30])))
 colnames(final_avg) <- c( "DMSO24", "MKC24", "DMSO48", "MKC48", "DMSO72", "MKC72")
@@ -97,6 +114,8 @@ final_avg$lenght <- final_avg$lenght - final_avg$saturation #bad regex
 
 # solo lipids
 solo_lipids <- subset(final_avg, final_avg$Lipid_Class != "Amino Acids") #also removes NA
+
+
 
 # HEATMAP OF FOLD CHANGES FOR ALL LIPIDS THROUGH 3 TIME POINTS
 annotation_row <- as.data.frame(solo_lipids$Lipid_Class)
@@ -143,7 +162,7 @@ timeplot = function(lipido, color) {
 }
 
 
-timeplot("Diacylglycerol", "green")
+timeplot("Phosphatidylglycerol", "green")
 
 # plot all lipid groups. using same colors as in heatmap
 for (i in unique(solo_lipids$Lipid_Class)) {

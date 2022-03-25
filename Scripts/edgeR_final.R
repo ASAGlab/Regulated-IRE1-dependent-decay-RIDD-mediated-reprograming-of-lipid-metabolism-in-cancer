@@ -10,14 +10,14 @@ library("reshape2")
 library("pheatmap")
 
 ## load raw counts and sample info
-raw_counts <- read.delim(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/raw_counts.txt"), sep="", quote = "") 
+raw_counts <- read.delim(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/raw_counts.txt"), sep="") 
 sample_info_RNAseq <- read.delim(url("https://raw.githubusercontent.com/ASAGlab/Regulated-IRE1-dependent-decay-RIDD-mediated-reprograming-of-lipid-metabolism-in-cancer/main/Data/sample_info_RNAseq.txt"), sep="") 
 
 eset <- raw_counts[,7:18] # first 6 columns is annotation
 
 # Annotate genes 
 listEnsembl(GRCh=38)
-listEnsembl(version=91)
+listEnsembl(version=105)
 ensembl = useMart("ensembl")
 ensembl = useDataset("hsapiens_gene_ensembl",mart=ensembl)
 todo_genes <- getBM(attributes=c('ensembl_gene_id','hgnc_symbol','chromosome_name'), mart=ensembl)
@@ -241,17 +241,17 @@ p + scale_fill_manual(values=my_palette) + geom_raster() + geom_tile(aes(fill = 
 
 #### HEATMAP TG METABOLISM GENES
 # selected from literature
-log_cleaned_count_TG <- log_cleaned_count[ c("ENSG00000062282", "ENSG00000169692", "ENSG00000131408", "ENSG00000072310", "ENSG00000025434", "ENSG00000166035", "ENSG00000079435" ),]
-row.names(log_cleaned_count_TG) <- c("DGAT2", "AGPAT2", "NR1H2", "SREBF1", "NR1H3", "LIPC", "LIPE")
+cleaned_count_TG <- cleaned_count[ c("ENSG00000062282", "ENSG00000169692", "ENSG00000131408", "ENSG00000072310", "ENSG00000025434", "ENSG00000166035", "ENSG00000079435" ),]
+row.names(cleaned_count_TG) <- c("DGAT2", "AGPAT2", "NR1H2", "SREBF1", "NR1H3", "LIPC", "LIPE")
 
 # average eset for plotting heatmap
-TG_eset_avg <- data.frame("DMSO 8" = rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "DMSO 8"]), 
-                          "MKC8866 8" = rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "MKC8866 8"]), 
-                          "DMSO 24" = rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "DMSO 24"]), 
-                          "MKC8866 24" =rowMeans(log_cleaned_count_TG[,sample_info_RNAseq$groups == "MKC8866 24"]))
+TG_eset_avg <- data.frame("DMSO 8" = rowMeans(cleaned_count_TG[,sample_info_RNAseq$groups == "DMSO 8"]), 
+                          "MKC8866 8" = rowMeans(cleaned_count_TG[,sample_info_RNAseq$groups == "MKC8866 8"]), 
+                          "DMSO 24" = rowMeans(cleaned_count_TG[,sample_info_RNAseq$groups == "DMSO 24"]), 
+                          "MKC8866 24" =rowMeans(cleaned_count_TG[,sample_info_RNAseq$groups == "MKC8866 24"]))
 
 my_palette <- colorRampPalette(c("navy","white","red"))(n = 299) # scale blue to red, or whatever colors
-pheatmap(TG_eset_avg, 
+pheatmap((TG_eset_avg), 
          cluster_cols = FALSE,
          cluster_rows = FALSE,
          scale = "row", 
